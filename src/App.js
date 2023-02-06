@@ -31,6 +31,7 @@ function App() {
       <div className='container'>
         <div id='quote-box'>
           <h2 id='text' style={{color: themes[theme].color}}>
+            <i class="fa-sharp fa-solid fa-quote-left"></i>
             {
               quotes 
                 ? quotes[random].text 
