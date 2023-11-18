@@ -13,9 +13,8 @@ function App() {
   const rollTheme = Math.floor(Math.random() * 10);
   const [ theme, setTheme ] = useState(rollTheme);
   const newTheme = () => setTheme(rollTheme);
-  const [ newQuote, setNewQuote ] = useState(null)
 
-  useEffect(() => {
+  const fetchQuote = () => {
     fetch(quoteUrl,{
       headers: {
         'X-Api-Key': apiKey
@@ -25,7 +24,11 @@ function App() {
     .then(data => {
       setQuote(data[0]);
     })
-  }, [newQuote])
+  }
+
+  useEffect(() => {
+    fetchQuote()
+  }, [])
 
   const tweet = quote ?
     `${twitterURL}"${quote.quote}"${quote.author ?
@@ -63,7 +66,7 @@ function App() {
               <i className="fa-brands fa-twitter"></i>
             </a>
             <button id='new-quote' style={{backgroundColor: themes[theme]['color']}}
-              onClick={() => {setNewQuote(Math.random()); newTheme()}}>
+              onClick={() => {fetchQuote(); newTheme()}}>
               New Quote
             </button>
           </div>
