@@ -2,47 +2,56 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import themes from './themes.json';
 
-const quoteUrl = 'https://type.fit/api/quotes';
+const quoteUrl = 'https://api.api-ninjas.com/v1/quotes';
+const apiKey = '2kZRirHHrokYP0dI3wcQWw==bEqlrnXSKyQAoK0M';
 const githubURL = "https://github.com/turalshkrov";
 const twitterURL = "https://twitter.com/intent/tweet?text=";
 
 function App() {
-  const [ quotes, setQuotes ] = useState(null);
-  const rollQuote = Math.floor(Math.random() * 1643);
-  const [ random, setRandom ] = useState(rollQuote);
-  const newQuote = () => setRandom(rollQuote);
+  const [ quote, setQuote ] = useState(null)
   
   const rollTheme = Math.floor(Math.random() * 10);
   const [ theme, setTheme ] = useState(rollTheme);
   const newTheme = () => setTheme(rollTheme);
 
-  useEffect(() => {
-    fetch(quoteUrl)
+  const fetchQuote = () => {
+    fetch(quoteUrl,{
+      headers: {
+        'X-Api-Key': apiKey
+      }
+    })
     .then(res => res.json())
-    .then(data => setQuotes(data));
+    .then(data => {
+      setQuote(data[0]);
+    })
+  }
+
+  useEffect(() => {
+    fetchQuote()
   }, [])
 
-  const tweet = quotes ?
-    `${twitterURL}"${quotes[random].text}"${quotes[random].author ?
-    " - " + quotes[random].author : ""}`
+  const tweet = quote ?
+    `${twitterURL}"${quote.quote}"${quote.author ?
+    " - " + quote.author : ""}`
     : twitterURL;
+  
   return (
     <div className="App" style={{backgroundColor: themes[theme]['bg-color']}}>
       <div className='container'>
         <div id='quote-box'>
           <h2 id='text' style={{color: themes[theme].color}}>
-            <i class="fa-sharp fa-solid fa-quote-left"></i>
+            <i className="fa-sharp fa-solid fa-quote-left"></i>
             {
-              quotes 
-                ? quotes[random].text 
+              quote
+                ? quote.quote
                 : ''
             }
           </h2>
           <p id='author' style={{color: themes[theme].color}}>
             - {
-              quotes 
-                ? quotes[random].author 
-                  ? quotes[random].author 
+              quote
+                ? quote.author
+                  ? quote.author
                   : 'Unknown' 
                 : ''
             }
@@ -54,10 +63,10 @@ function App() {
               target='_blank'
               rel="noreferrer"
               href={tweet}>
-              <i class="fa-brands fa-twitter"></i>
+              <i className="fa-brands fa-twitter"></i>
             </a>
             <button id='new-quote' style={{backgroundColor: themes[theme]['color']}}
-              onClick={() => {newQuote(); newTheme()}}>
+              onClick={() => {fetchQuote(); newTheme()}}>
               New Quote
             </button>
           </div>
